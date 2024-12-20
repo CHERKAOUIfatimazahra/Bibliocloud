@@ -12,18 +12,28 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { CategoryService } from '../categories/categories.service';
 
 @Injectable()
 export class BookService {
   private readonly docClient: DynamoDBDocumentClient;
   private readonly logger = new Logger(BookService.name);
 
-  constructor() {
+  constructor(private readonly categoryService: CategoryService) {
     this.docClient = getDynamoDBClient();
   }
-
   async createBook(createBookDto: CreateBookDto) {
     try {
+      // Check if category exists before creating the book
+      const category = await this.categoryService.getCategoryById(
+        createBookDto.categoryId,
+      );
+      if (!category) {
+        throw new NotFoundException(
+          `Category with ID ${createBookDto.categoryId} not found`,
+        );
+      }
+
       const item = {
         id: uuidv4(),
         ...createBookDto,
@@ -44,48 +54,47 @@ export class BookService {
     }
   }
 
-  async getBookById(id: string) {
-    try {
-      const params = {
-        TableName: process.env.BOOKS_TABLE_NAME,
-        Key: { id },
-      };
-
-      const response = await this.docClient.send(new GetCommand(params));
-
-      if (!response.Item) {
-        throw new NotFoundException(`Book with ID ${id} not found`);
-      }
-
-      return response.Item;
-    } catch (error) {
-      this.logger.error(`Error fetching book with ID ${id}`, error);
-      throw error;
-    }
-  }
-
   async updateBook(id: string, updateBookDto: UpdateBookDto) {
     try {
-      // First, verify the book exists
-      await this.getBookById(id);
+      // Verify the book exists
+      const existingBook = await this.getBookById(id);
 
-      const { title, author, category, ...otherFields } = updateBookDto;
+      // If categoryId is provided, check if the category exists
+      if (updateBookDto.categoryId) {
+        const category = await this.categoryService.getCategoryById(
+          updateBookDto.categoryId,
+        );
+        if (!category) {
+          throw new NotFoundException(
+            `Category with ID ${updateBookDto.categoryId} not found`,
+          );
+        }
+      }
+
+      // Prepare the update expression
+      const { title, author, categoryId, description, available_copies, ...otherFields } =
+        updateBookDto;
 
       const updateExpressions = [];
       const expressionAttributeNames = {};
       const expressionAttributeValues = {};
 
-      Object.entries({ title, author, category, ...otherFields }).forEach(
-        ([key, value], index) => {
-          if (value !== undefined) {
-            const placeholder = `#field${index}`;
-            const valuePlaceholder = `:value${index}`;
-            updateExpressions.push(`${placeholder} = ${valuePlaceholder}`);
-            expressionAttributeNames[placeholder] = key;
-            expressionAttributeValues[valuePlaceholder] = value;
-          }
-        },
-      );
+      Object.entries({
+        title,
+        author,
+        categoryId,
+        description,
+        available_copies,
+        ...otherFields,
+      }).forEach(([key, value], index) => {
+        if (value !== undefined) {
+          const placeholder = `#field${index}`;
+          const valuePlaceholder = `:value${index}`;
+          updateExpressions.push(`${placeholder} = ${valuePlaceholder}`);
+          expressionAttributeNames[placeholder] = key;
+          expressionAttributeValues[valuePlaceholder] = value;
+        }
+      });
 
       const params = {
         TableName: process.env.BOOKS_TABLE_NAME,
@@ -106,6 +115,26 @@ export class BookService {
       return response.Attributes;
     } catch (error) {
       this.logger.error(`Error updating book with ID ${id}`, error);
+      throw error;
+    }
+  }
+
+  async getBookById(id: string) {
+    try {
+      const params = {
+        TableName: process.env.BOOKS_TABLE_NAME,
+        Key: { id },
+      };
+
+      const response = await this.docClient.send(new GetCommand(params));
+
+      if (!response.Item) {
+        throw new NotFoundException(`Book with ID ${id} not found`);
+      }
+
+      return response.Item;
+    } catch (error) {
+      this.logger.error(`Error fetching book with ID ${id}`, error);
       throw error;
     }
   }
