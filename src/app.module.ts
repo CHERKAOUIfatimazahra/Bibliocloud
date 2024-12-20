@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DynamoDBService } from './database/dynamodb.service';
 import { BookModule } from './book/book.module';
+import { CategoriesModule } from './categories/categories.module';
+import { EmpruntsController } from './emprunts/emprunts.controller';
+import { EmpruntsModule } from './emprunts/emprunts.module';
 
 @Module({
   imports: [
@@ -12,8 +15,10 @@ import { BookModule } from './book/book.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    CategoriesModule,
+    EmpruntsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, EmpruntsController],
   providers: [AppService, DynamoDBService],
 })
 export class AppModule {}
