@@ -24,6 +24,18 @@ export class CategoryService {
 
   async createCategory(createCategoryDto: CreateCategoryDto) {
     try {
+      // Check if a category with the same name already exists
+      const existingCategories = await this.getAllCategories();
+      const isNameTaken = existingCategories.some(
+        (category) => category.name === createCategoryDto.name,
+      );
+
+      if (isNameTaken) {
+        throw new Error(
+          `Category with name "${createCategoryDto.name}" already exists`,
+        );
+      }
+
       const item = {
         id: uuidv4(),
         ...createCategoryDto,
