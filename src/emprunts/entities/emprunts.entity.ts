@@ -3,7 +3,8 @@ export class Emprunt {
   userId: string;
   bookId: string;
   loanDate: string;
-  returnDate?: string;
+  dateRetour?: string;
+  dateEmprunt?: string;
   createdAt: string;
   updatedAt: string;
 }
