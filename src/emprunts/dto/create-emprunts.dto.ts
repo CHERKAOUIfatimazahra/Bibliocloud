@@ -14,5 +14,8 @@ export class CreateEmpruntDto {
   loanDate: string;
 
   @IsDateString()
-  returnDate?: string;
+  dateRetour?: string;
+
+  @IsDateString()
+  dateEmprunt?: string;
 }
