@@ -7,7 +7,7 @@ import {
   ScanCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { getDynamoDBClient } from '../config/dynamodb.config';
+import { getDynamoDBClient } from '../config/dynamoDB.config';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Logger } from '@nestjs/common';

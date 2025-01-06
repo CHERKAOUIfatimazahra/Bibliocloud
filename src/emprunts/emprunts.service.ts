@@ -13,7 +13,7 @@ import {
   ScanCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { getDynamoDBClient } from '../config/dynamodb.config';
+import { getDynamoDBClient } from '../config/dynamoDB.config';
 import { CreateEmpruntDto } from './dto/create-emprunts.dto';
 import { UpdateEmpruntDto } from './dto/update-emprunts.dto';
 import { v4 as uuidv4 } from 'uuid';

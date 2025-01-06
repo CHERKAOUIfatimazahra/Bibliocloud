@@ -8,7 +8,7 @@ import {
   UpdateCommand,
   ScanCommand,
 } from '@aws-sdk/lib-dynamodb';
-import { getDynamoDBClient } from '../config/dynamodb.config';
+import { getDynamoDBClient } from '../config/dynamoDB.config';
 
 @Injectable()
 export class DynamoDBService implements OnModuleInit {
