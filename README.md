@@ -2,7 +2,7 @@
 
 ## 🚀 Présentation du Projet
 
-Bookio est une application de gestion de bibliothèque moderne utilisant une architecture de microservices basée sur AWS, permettant aux utilisateurs de rechercher, emprunter et gérer des livres de manière efficace et sécurisée.
+bibliocloud est une application de gestion de bibliothèque moderne utilisant une architecture de microservices basée sur AWS, permettant aux utilisateurs de rechercher, emprunter et gérer des livres de manière efficace et sécurisée.
 
 ## 📋 Fonctionnalités Principales
 
@@ -86,30 +86,6 @@ Le déploiement est automatisé via GitHub Actions ou AWS CodePipeline.
    - Build des services
    - Tests
    - Déploiement sur AWS
-
-## 📡 API Endpoints
-
-### Service d'Authentification
-- `POST /auth/signup` : Inscription
-- `POST /auth/login` : Connexion
-- `GET /auth/me` : Informations utilisateur
-
-### Service de Gestion des Livres
-- `GET /books` : Lister tous les livres
-- `GET /books/:id` : Détails d'un livre
-- `POST /books/:id/borrow` : Emprunter un livre
-- `POST /books/:id/return` : Retourner un livre
-
-## 🧪 Tests
-
-```bash
-# Lancer les tests
-npm run test
-
-## 📝 Documentation API
-
-La documentation complète de l'API est disponible via :
-- Collection Postman : Voir `docs/`
 
 
 ## 🔒 Sécurité
